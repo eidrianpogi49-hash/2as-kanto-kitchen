@@ -3,11 +3,13 @@ import './App.css';
 import Header from './components/Header';
 import MenuSection from './components/MenuSection';
 import Cart from './components/Cart';
+import Admin from './components/Admin';
 import { menuCategories } from './data/menu';
 
 function App() {
   const [cart, setCart] = useState([]);
   const [showCart, setShowCart] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
 
   const addToCart = (item) => {
     const existingItem = cart.find(cartItem => cartItem.id === item.id);
@@ -37,6 +39,22 @@ function App() {
     }
   };
 
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  // Check URL for admin access
+  React.useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/admin') {
+      setShowAdmin(true);
+    }
+  }, []);
+
+  if (showAdmin) {
+    return <Admin />;
+  }
+
   return (
     <div className="App">
       <Header cartCount={cart.length} onCartClick={() => setShowCart(!showCart)} />
@@ -47,6 +65,7 @@ function App() {
             items={cart}
             onRemove={removeFromCart}
             onUpdateQuantity={updateQuantity}
+            onClearCart={clearCart}
           />
         ) : (
           <div className="menu-container">
@@ -60,6 +79,22 @@ function App() {
           </div>
         )}
       </main>
+
+      {/* Admin link (hidden) */}
+      <div style={{ position: 'fixed', bottom: 10, right: 10, fontSize: '10px', color: '#ccc' }}>
+        <button 
+          onClick={() => setShowAdmin(true)}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            color: '#ccc',
+            textDecoration: 'underline'
+          }}
+        >
+          admin
+        </button>
+      </div>
     </div>
   );
 }
